@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Еда</string>
+    <string name="food_list_button_text">Список продуктов</string>
+</resources>
