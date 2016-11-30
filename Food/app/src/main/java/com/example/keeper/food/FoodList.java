@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,20 +16,41 @@ import java.util.List;
 
 
 public class FoodList extends Activity {
+    List<FoodData> foodNames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_list);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        List<FoodData> foodNames = new ArrayList<>();
+        foodNames = new ArrayList<>();
         addFood(foodNames);
 
         PersonAdapter adapter = new PersonAdapter(foodNames);
         recyclerView.setAdapter(adapter);
+
+        SearchView sv = (SearchView) findViewById(R.id.search);
+        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                List<FoodData> list = new ArrayList<FoodData>();
+                for (FoodData data : foodNames) {
+                    if (data.getName().toUpperCase().contains(newText.toUpperCase())) {
+                        list.add(data);
+                    }
+                }
+                recyclerView.setAdapter(new PersonAdapter(list));
+                return false;
+            }
+        });
     }
 
     private void addFood (List<FoodData> foodNames) {
