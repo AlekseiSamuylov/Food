@@ -11,12 +11,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class FoodList extends Activity {
-    List<FoodData> foodNames;
+    private List<FoodData> foodList;
+    private String localDBPath = "LocalJsonDB/data.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,10 +36,10 @@ public class FoodList extends Activity {
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        foodNames = new ArrayList<>();
-        addFood(foodNames);
+        foodList = getFoodList();
+        System.out.println(foodList.size());
 
-        PersonAdapter adapter = new PersonAdapter(foodNames);
+        PersonAdapter adapter = new PersonAdapter(foodList);
         recyclerView.setAdapter(adapter);
 
         SearchView sv = (SearchView) findViewById(R.id.search);
@@ -42,7 +52,7 @@ public class FoodList extends Activity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 List<FoodData> list = new ArrayList<FoodData>();
-                for (FoodData data : foodNames) {
+                for (FoodData data : foodList) {
                     if (data.getName().toUpperCase().contains(newText.toUpperCase())) {
                         list.add(data);
                     }
@@ -53,12 +63,23 @@ public class FoodList extends Activity {
         });
     }
 
-    private void addFood (List<FoodData> foodNames) {
-        foodNames.add(new FoodData("Апельсин", "orange.png", "Какой-то текст1"));
-        foodNames.add(new FoodData("Картошка", "potato.png", "Какой-то текст2"));
-        foodNames.add(new FoodData("Киви", "kiwi.png", "Какой-то текст3"));
-        foodNames.add(new FoodData("Чай", "tea.png", "Какой-то текст4"));
-        foodNames.add(new FoodData("Яблоко", "apple.png", "Какой-то текст5"));
+    private List<FoodData> getFoodList () {
+        List<FoodData> foodList = new ArrayList<>();
+        try {
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets().open(localDBPath)));
+            String data = reader.readLine();
+            reader.close();
+
+            Gson gson = new Gson();
+            Type itemListType = new TypeToken<List<FoodData>>() {}.getType();
+            foodList = gson.fromJson(data, itemListType);
+
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return foodList;
+        }
+        return foodList;
     }
 
     private class PersonHolder extends RecyclerView.ViewHolder {

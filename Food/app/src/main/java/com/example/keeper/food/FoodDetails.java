@@ -23,7 +23,7 @@ public class FoodDetails extends AppCompatActivity {
 
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
         try {
-            InputStream input = getAssets().open("pictures/" + foodData.getImageName());
+            InputStream input = getAssets().open(foodData.getImagePath());
             Drawable d = Drawable.createFromStream(input, null);
 
 
@@ -33,6 +33,6 @@ public class FoodDetails extends AppCompatActivity {
         }
 
         TextView textView = (TextView) findViewById(R.id.detailsText);
-        textView.setText(foodData.getData());
+        textView.setText(foodData.getText());
     }
 }
