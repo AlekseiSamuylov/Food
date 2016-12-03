@@ -37,7 +37,6 @@ public class FoodList extends Activity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         foodList = getFoodList();
-        System.out.println(foodList.size());
 
         PersonAdapter adapter = new PersonAdapter(foodList);
         recyclerView.setAdapter(adapter);
@@ -66,7 +65,6 @@ public class FoodList extends Activity {
     private List<FoodData> getFoodList () {
         List<FoodData> foodList = new ArrayList<>();
         try {
-
             BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets().open(localDBPath)));
             String data = reader.readLine();
             reader.close();
@@ -74,7 +72,6 @@ public class FoodList extends Activity {
             Gson gson = new Gson();
             Type itemListType = new TypeToken<List<FoodData>>() {}.getType();
             foodList = gson.fromJson(data, itemListType);
-
         } catch (IOException e) {
             System.out.println(e.getMessage());
             return foodList;

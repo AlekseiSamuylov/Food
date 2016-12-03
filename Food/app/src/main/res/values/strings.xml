@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Еда</string>
-    <string name="food_list_button_text">Список продуктов</string>
+    <string name="food_list_button_text">Продукты</string>
+    <string name="setting_button_text">Настройки</string>
+    <string name="light_style">Светлая</string>
+    <string name="dark_style">Тёмная</string>
+    <string name="setting_style_text">Цветовая схема</string>
 </resources>
