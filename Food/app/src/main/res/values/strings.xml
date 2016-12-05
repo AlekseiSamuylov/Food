@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">Еда</string>
-    <string name="food_list_button_text">Продукты</string>
-    <string name="setting_button_text">Настройки</string>
-    <string name="light_style">Светлая</string>
-    <string name="dark_style">Тёмная</string>
-    <string name="setting_style_text">Цветовая схема</string>
+    <string name="app_name">Food</string>
+    <string name="food_list_button_text">Food</string>
+    <string name="setting_button_text">Settings</string>
+    <string name="light_style">Light</string>
+    <string name="dark_style">Dark</string>
+    <string name="setting_style_text">Color style</string>
 </resources>
