@@ -3,6 +3,7 @@ package com.example.keeper.food;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,11 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SettingsMenu extends AppCompatActivity {
+    private final String TAG = "SettingsMenu";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_menu);
-        
+
         TextView textView = (TextView) findViewById(R.id.styleSettingText);
         textView.setText(R.string.setting_style_text);
 
@@ -38,6 +41,7 @@ public class SettingsMenu extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, "On spinner item click with position " + position);
                 SharedPreferences pref = getPreferences(MODE_PRIVATE);
                 SharedPreferences.Editor editor = pref.edit();
                 if (position == 0 ) {

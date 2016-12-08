@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,8 @@ import java.util.List;
 
 public class FoodList extends Activity {
     private List<FoodData> foodList;
-    private String localDBPath = "LocalJsonDB/data.txt";
+    private final String TAG = "FoodList";
+    private final String localDBPath = "LocalJsonDB/data.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,7 @@ public class FoodList extends Activity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                Log.d(TAG, "In change text listener new text: \"" + newText + "\"");
                 List<FoodData> list = new ArrayList<FoodData>();
                 for (FoodData data : foodList) {
                     if (data.getName().toUpperCase().contains(newText.toUpperCase())) {
@@ -60,9 +63,19 @@ public class FoodList extends Activity {
                 return false;
             }
         });
+        Log.d(TAG, "Finish onCreate method");
+    }
+
+    private List<FoodData> getFoodListFromSqlDB () {
+        List<FoodData> foodList = new ArrayList<>();
+
+
+
+        return foodList;
     }
 
     private List<FoodData> getFoodList () {
+        Log.d(TAG, "Start method getFoodList");
         List<FoodData> foodList = new ArrayList<>();
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets().open(localDBPath)));
@@ -73,9 +86,10 @@ public class FoodList extends Activity {
             Type itemListType = new TypeToken<List<FoodData>>() {}.getType();
             foodList = gson.fromJson(data, itemListType);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            Log.e(TAG, e.getMessage());
             return foodList;
         }
+        Log.d(TAG, "Finish method getFoodList");
         return foodList;
     }
 
@@ -114,6 +128,7 @@ public class FoodList extends Activity {
             holder.foodNameTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.d(TAG, "Click on item with text: " + ((TextView) v).getText());
                     Intent intent = new Intent(FoodList.this, FoodDetails.class);
                     intent.putExtra(FoodData.class.getCanonicalName(), foodData);
                     startActivity(intent);
