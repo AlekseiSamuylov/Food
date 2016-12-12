@@ -1,8 +1,16 @@
 package com.example.keeper.food;
 
 import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -16,9 +24,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -27,18 +33,20 @@ import java.util.List;
 
 public class FoodList extends Activity {
     private List<FoodData> foodList;
+    private DBHelper dbHelper;
     private final String TAG = "FoodList";
-    private final String localDBPath = "LocalJsonDB/data.txt";
+    private final String firsRunDataLocation = "LocalJsonDB/data.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_list);
 
+        dbHelper = new DBHelper(this);
+        foodList = getData();
+
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        foodList = getFoodList();
 
         PersonAdapter adapter = new PersonAdapter(foodList);
         recyclerView.setAdapter(adapter);
@@ -66,19 +74,32 @@ public class FoodList extends Activity {
         Log.d(TAG, "Finish onCreate method");
     }
 
-    private List<FoodData> getFoodListFromSqlDB () {
-        List<FoodData> foodList = new ArrayList<>();
+    private List<FoodData> getData () {
+        Log.d(TAG, "Method gedData start");
+        List<FoodData> list;
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        boolean firsRun = preferences.getBoolean("firstRun", true);
+        if (firsRun) {
+            Log.d(TAG, "First run.");
+            list = getFoodListFromJson();
+            addDataToSQL(list);
 
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("firstRun", false);
+            editor.commit();
+        } else {
+            Log.d(TAG, "Not first run");
+            list = getFoodListFromSQL();
+        }
 
-
-        return foodList;
+        return list;
     }
 
-    private List<FoodData> getFoodList () {
-        Log.d(TAG, "Start method getFoodList");
+    private List<FoodData> getFoodListFromJson () {
+        Log.d(TAG, "Method getFoodListFromJson start");
         List<FoodData> foodList = new ArrayList<>();
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets().open(localDBPath)));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets().open(firsRunDataLocation)));
             String data = reader.readLine();
             reader.close();
 
@@ -89,8 +110,27 @@ public class FoodList extends Activity {
             Log.e(TAG, e.getMessage());
             return foodList;
         }
-        Log.d(TAG, "Finish method getFoodList");
         return foodList;
+    }
+
+    private List<FoodData> getFoodListFromSQL () {
+        List<FoodData> list = new ArrayList<>();
+        MyTask mt = new MyTask();
+
+        Pair<List<FoodData>, Boolean> pair = new Pair<>(null, false);
+        mt.execute(pair);
+        try {
+            list = mt.get();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
+
+    private void addDataToSQL (List<FoodData> list) {
+        MyTask mt = new MyTask();
+        Pair<List<FoodData>, Boolean> pair = new Pair<>(list, true);
+        mt.execute(pair);
     }
 
     private class PersonHolder extends RecyclerView.ViewHolder {
@@ -139,6 +179,72 @@ public class FoodList extends Activity {
         @Override
         public int getItemCount() {
             return foodDataList.size();
+        }
+    }
+
+    class MyTask extends AsyncTask<Pair<List<FoodData>, Boolean>, Void, List<FoodData>> {
+        @Override
+        protected List<FoodData> doInBackground(Pair<List<FoodData>, Boolean>... pairs) {
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            List<FoodData> list = new ArrayList<>();
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+            boolean firsRun = pairs[0].second;
+            if (firsRun) {
+                System.out.println("List size: " + pairs[0].first.size() + ", firstRun = " + firsRun);
+                ContentValues cv = new ContentValues();
+                for (FoodData data : pairs[0].first) {
+                    cv.put("name", data.getName());
+                    cv.put("image_path", data.getImagePath());
+                    cv.put("information", data.getText());
+                    db.insert("food", null, cv);
+                    cv.clear();
+                    System.out.println("To SQL: " + data.toString());
+                }
+            } else {
+                Cursor cursor = db.query("food", null, null, null, null, null, null);
+
+                if (cursor.moveToFirst()) {
+                    int nameColumnIndex = cursor.getColumnIndex("name");
+                    int pathColumnIndex = cursor.getColumnIndex("image_path");
+                    int textColumnIndex = cursor.getColumnIndex("information");
+
+                    do {
+                        String name = cursor.getString(nameColumnIndex);
+                        String imagePath = cursor.getString(pathColumnIndex);
+                        String text = cursor.getString(textColumnIndex);
+
+                        FoodData data = new FoodData(name, imagePath, text);
+                        list.add(data);
+
+                        System.out.println("From SQL: " + data.toString());
+                    } while (cursor.moveToNext());
+                } else {
+                    //0 rows
+                }
+            }
+            return list;
+        }
+    }
+
+    class DBHelper extends SQLiteOpenHelper {
+
+        public DBHelper(Context context) {
+            super(context, "food", null, 1);
+        }
+
+        @Override
+        public void onCreate(SQLiteDatabase db) {
+            db.execSQL("create table food ("
+                    + "id integer primary key autoincrement,"
+                    + "name text,"
+                    + "image_path text,"
+                    + "information text" + ");");
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
         }
     }
 }
