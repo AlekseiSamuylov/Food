@@ -3,8 +3,11 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="colorListItemBackground">#21E8DF</color>
     <color name="colorListItemText">#131C3F</color>
     <color name="colorDetailsMainBackground">#05CAFF</color>
+    <color name="colorItemsBackgroundDark">#aa20267E</color>
+    <color name="colorItemsBackgroundLight">#aa19A333</color>
+    <color name="colorDetailsTextLight">#ffffff</color>
+    <color name="colorDetailsTextDark">#20267E</color>
     <color name="black">#000000</color>
 </resources>

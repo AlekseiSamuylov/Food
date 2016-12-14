@@ -3,15 +3,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/foodListItemLinearLayout"
     android:layout_marginTop="1dp"
     android:layout_marginBottom="1dp"
     android:padding="4dp"
     android:orientation="vertical"
-    android:background="@color/colorListItemBackground">
+    android:background="@color/colorItemsBackgroundLight">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/foodName"
-        android:textColor="@color/colorListItemText"/>
+        android:textColor="@color/colorListItemText"
+        android:layout_margin="@dimen/list_items_margin"/>
 </LinearLayout>

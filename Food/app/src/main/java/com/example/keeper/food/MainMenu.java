@@ -17,15 +17,6 @@ public class MainMenu extends AppCompatActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
-        SharedPreferences sPref = getSharedPreferences("appStyle", MODE_PRIVATE);
-        int position = sPref.getInt("backgroundStyle", 0);
-        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.activity_main_menu);
-        if (position == 0) {
-            relativeLayout.setBackgroundResource(R.drawable.light);
-        } else {
-            relativeLayout.setBackgroundResource(R.drawable.dark);
-        }
-
         Button buttonFood = (Button) findViewById(R.id.buttonFood);
         buttonFood.setText(R.string.food_list_button_text);
         buttonFood.setOnClickListener(this);
@@ -33,6 +24,19 @@ public class MainMenu extends AppCompatActivity implements View.OnClickListener 
         Button buttonSettings = (Button) findViewById(R.id.buttonSettings);
         buttonSettings.setText(R.string.setting_button_text);
         buttonSettings.setOnClickListener(this);
+
+        SharedPreferences sPref = getSharedPreferences("appStyle", MODE_PRIVATE);
+        int position = sPref.getInt("backgroundStyle", 0);
+        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.activity_main_menu);
+        if (position == 0) {
+            relativeLayout.setBackgroundResource(R.drawable.light);
+            buttonFood.setBackgroundResource(R.color.colorItemsBackgroundLight);
+            buttonSettings.setBackgroundResource(R.color.colorItemsBackgroundLight);
+        } else {
+            relativeLayout.setBackgroundResource(R.drawable.dark);
+            buttonFood.setBackgroundResource(R.color.colorItemsBackgroundDark);
+            buttonSettings.setBackgroundResource(R.color.colorItemsBackgroundDark);
+        }
         Log.d(TAG, "Finish onCreate method");
     }
 

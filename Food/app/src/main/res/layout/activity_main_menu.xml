@@ -19,13 +19,15 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/buttonFood">
+            android:id="@+id/buttonFood"
+            android:layout_margin="@dimen/main_menu_button_margin">
         </Button>
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/buttonSettings">
+            android:id="@+id/buttonSettings"
+            android:layout_margin="@dimen/main_menu_button_margin">
         </Button>
     </LinearLayout>
 
