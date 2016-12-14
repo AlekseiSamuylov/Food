@@ -91,23 +91,27 @@ public class FoodList extends Activity {
     private List<FoodData> getData () {
         Log.d(TAG, "Method getData start.");
 
-        List<FoodData> list;
-        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-        boolean firsRun = preferences.getBoolean("firstRun", true);
-        if (firsRun) {
-            PendingIntent pendingIntent = createPendingResult(GET_DATA_FROM_INTERNET_CODE, null, 0);
-            Intent intent = new Intent(this, LoadDataFromInternetService.class);
-            intent.putExtra("pendingIntent", pendingIntent);
-            startService(intent);
+        List<FoodData> list = new ArrayList<>();
+        try {
+            SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+            boolean firsRun = preferences.getBoolean("firstRun", true);
+            if (firsRun) {
+                PendingIntent pendingIntent = createPendingResult(GET_DATA_FROM_INTERNET_CODE, new Intent(), 0);
+                Intent intent = new Intent(this, LoadDataFromInternetService.class);
+                intent.putExtra("pendingIntent", pendingIntent);
+                startService(intent);
 
-            list = getFoodListFromJson();
-            addDataToSQL(list);
+                list = getFoodListFromJson();
+                addDataToSQL(list);
 
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("firstRun", false);
-            editor.commit();
-        } else {
-            list = getFoodListFromSQL();
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("firstRun", false);
+                editor.commit();
+            } else {
+                list = getFoodListFromSQL();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
         }
 
         return list;
@@ -163,7 +167,7 @@ public class FoodList extends Activity {
         try {
             list = task.get();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            Log.e(TAG, e.getMessage());
         }
 
         return list;
