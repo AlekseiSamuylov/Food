@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -45,6 +46,15 @@ public class FoodList extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_list);
+
+        SharedPreferences sPref = getSharedPreferences("appStyle", MODE_PRIVATE);
+        int position = sPref.getInt("backgroundStyle", 0);
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.foodListLinearLayout);
+        if (position == 0) {
+            linearLayout.setBackgroundResource(R.drawable.light);
+        } else {
+            linearLayout.setBackgroundResource(R.drawable.dark);
+        }
 
         dbHelper = new DBHelper(this);
         foodList = getData();

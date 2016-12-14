@@ -7,8 +7,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,20 +37,27 @@ public class SettingsMenu extends AppCompatActivity {
         Spinner spinner = (Spinner) findViewById(R.id.spinnerStyle);
         spinner.setAdapter(adapter);
 
-        SharedPreferences sPref = getPreferences(MODE_PRIVATE);
-        int position = sPref.getInt("appStyle", 0);
+        SharedPreferences sPref = getSharedPreferences("appStyle", MODE_PRIVATE);
+        int position = sPref.getInt("backgroundStyle", 0);
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.settingsLinearLayout);
+        if (position == 0) {
+            linearLayout.setBackgroundResource(R.drawable.light);
+        } else {
+            linearLayout.setBackgroundResource(R.drawable.dark);
+        }
         spinner.setSelection(position);
+
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(TAG, "On spinner item click with position " + position);
-                SharedPreferences pref = getPreferences(MODE_PRIVATE);
+                SharedPreferences pref = getSharedPreferences("appStyle", MODE_PRIVATE);
                 SharedPreferences.Editor editor = pref.edit();
                 if (position == 0 ) {
-                    editor.putInt("appStyle", 0);
+                    editor.putInt("backgroundStyle", 0);
                 } else {
-                    editor.putInt("appStyle", 1);
+                    editor.putInt("backgroundStyle", 1);
                 }
                 editor.commit();
             }

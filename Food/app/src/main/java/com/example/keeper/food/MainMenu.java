@@ -1,11 +1,14 @@
 package com.example.keeper.food;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 public class MainMenu extends AppCompatActivity implements View.OnClickListener {
     private final String TAG = "MainMenu";
@@ -13,6 +16,15 @@ public class MainMenu extends AppCompatActivity implements View.OnClickListener 
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
+
+        SharedPreferences sPref = getSharedPreferences("appStyle", MODE_PRIVATE);
+        int position = sPref.getInt("backgroundStyle", 0);
+        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.activity_main_menu);
+        if (position == 0) {
+            relativeLayout.setBackgroundResource(R.drawable.light);
+        } else {
+            relativeLayout.setBackgroundResource(R.drawable.dark);
+        }
 
         Button buttonFood = (Button) findViewById(R.id.buttonFood);
         buttonFood.setText(R.string.food_list_button_text);
