@@ -90,15 +90,16 @@ public class FoodList extends Activity {
 
     private List<FoodData> getData () {
         Log.d(TAG, "Method getData start.");
-        PendingIntent pendingIntent = createPendingResult(GET_DATA_FROM_INTERNET_CODE, null, 0);
-        Intent intent = new Intent(this, LoadDataFromInternetService.class);
-        intent.putExtra("pendingIntent", pendingIntent);
-        startService(intent);
 
         List<FoodData> list;
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
         boolean firsRun = preferences.getBoolean("firstRun", true);
         if (firsRun) {
+            PendingIntent pendingIntent = createPendingResult(GET_DATA_FROM_INTERNET_CODE, null, 0);
+            Intent intent = new Intent(this, LoadDataFromInternetService.class);
+            intent.putExtra("pendingIntent", pendingIntent);
+            startService(intent);
+
             list = getFoodListFromJson();
             addDataToSQL(list);
 
@@ -122,6 +123,7 @@ public class FoodList extends Activity {
             Log.d(TAG, "Service finish.");
 
             List<FoodData> list = data.getParcelableArrayListExtra("serviceResultArray");
+            addDataToSQL(list);
             foodList.addAll(list);
 
             PersonAdapter adapter = new PersonAdapter(foodList);
