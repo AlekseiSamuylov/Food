@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/imageView"
             android:scaleType="fitStart"
+            android:adjustViewBounds="true"
             android:background="#ffffff"/>
 
         <TextView

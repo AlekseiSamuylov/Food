@@ -1,14 +1,12 @@
 package com.example.keeper.food;
 
-import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.io.InputStream;
+import com.squareup.picasso.Picasso;
 
 public class FoodDetails extends AppCompatActivity {
     private final String TAG = "FoodDetails";
@@ -17,21 +15,17 @@ public class FoodDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_details);
+        Log.d(TAG, "Method onCreate start.");
+
         FoodData foodData = getIntent().getParcelableExtra(FoodData.class.getCanonicalName());
 
         TextView foodName = (TextView) findViewById(R.id.detailsFoodName);
         foodName.setText(foodData.getName());
 
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
-        try {
-            InputStream input = getAssets().open(foodData.getImagePath());
-            Drawable d = Drawable.createFromStream(input, null);
-
-
-            imageView.setImageDrawable(d);
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-        }
+        Picasso.with(this)
+                .load(foodData.getImageUrl())
+                .into(imageView);
 
         TextView textView = (TextView) findViewById(R.id.detailsText);
         textView.setText(foodData.getText());

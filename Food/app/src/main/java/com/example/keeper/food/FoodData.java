@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 public class FoodData implements Parcelable {
     private String name;
-    private String imagePath;
+    private String imageUrl;
     private String text;
 
     public static final Creator<FoodData> CREATOR = new Creator<FoodData>() {
@@ -22,13 +22,13 @@ public class FoodData implements Parcelable {
 
     public FoodData (String name, String imageName, String data) {
         this.name = name;
-        this.imagePath = imageName;
+        this.imageUrl = imageName;
         this.text = data;
     }
 
     protected FoodData(Parcel in) {
         name = in.readString();
-        imagePath = in.readString();
+        imageUrl = in.readString();
         text = in.readString();
     }
 
@@ -36,8 +36,8 @@ public class FoodData implements Parcelable {
         return name;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
     public String getText() {
@@ -52,12 +52,12 @@ public class FoodData implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeString(imagePath);
+        dest.writeString(imageUrl);
         dest.writeString(text);
     }
 
     @Override
     public String toString () {
-        return "Name: " + name + ", imagePath: " + imagePath + ", text: " + text;
+        return "Name: " + name + ", imageUrl: " + imageUrl + ", text: " + text;
     }
 }
